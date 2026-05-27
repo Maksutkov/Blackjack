@@ -3,7 +3,7 @@
 #include <ctime>
 #include <cstdlib>
 
-#define ADMIN 1
+#define ADMIN 0
 
 class Sluts
 {
@@ -449,8 +449,8 @@ void game(unsigned int bet, int& balance, bool& returning) {
             return;
         }
         else if(answer=="Menu"||answer=="menu") {
-            return;
             returning=1;
+            return;
         }
         else {
             std::cout<<"\nНапишите Retry или Menu.\n\n";
@@ -462,17 +462,19 @@ void game(unsigned int bet, int& balance, bool& returning) {
 
 void start(int& balance, Sluts& slut) {
     unsigned int bet;
-    bool returning;
+    bool returning=0;
     std::string act;
-    if(returning) {
-        returning=0;
-        return;
-    }
     while(1) {
     std::cout<<"\nТекущий баланс: $"<<balance<<"\nМинимальная ставка: $100\n\nВведите свою ставку. ";
     std::cout<<"\nНапишите Back для возврата в меню.\n\n";
     while(1) {
-        std::cin>>bet;
+        std::cin>>act;
+        if(act=="Back"||act=="back") {
+            return;
+        }
+        else {
+            bet = std::stoi(act);
+        }
         if(bet>balance) {
             std::cout<<"Недостаточно средств.\n";
             continue;
@@ -484,6 +486,13 @@ void start(int& balance, Sluts& slut) {
                 if(yes) {
                     balance-=bet;
                     game(bet, balance, returning);
+                    if (returning) {
+                    // Игрок выбрал "Menu" – выходим из start()
+                    return;
+                    }
+                    else {
+                        break;
+                    }
                 }
                 else {
                     break;
@@ -608,7 +617,7 @@ void quit(int& balance, Sluts& slut) {
       Заходите ещё!
     
 Ваш итоговый баланс: )"<<"$"<<balance<<std::endl;
-std::cout<<"Шлюх куплено: "<<slut.sold1+slut.sold2+slut.sold3<<"/3\n";
+std::cout<<"Шлюх куплено: "<<slut.sold1+slut.sold2+slut.sold3<<"/3\n\n";
     exit(0);
 }
 
@@ -619,6 +628,7 @@ void func_selector(void (*name)(int&, Sluts&), int& balance, Sluts& slut) {
 void menu(int& balance) {
     std::string answer;
     Sluts slut;
+    while(1) {
     std::cout<<R"(
 Добро пожаловать в BlackJack_with_Sluts!
 
@@ -633,18 +643,22 @@ void menu(int& balance) {
         std::cin>>answer;
         if(answer=="Start" || answer=="start") {
             func_selector(start, balance, slut);
+            break;
         }
         else if(answer=="Store" || answer=="store") {
             func_selector(store, balance, slut);
+            break;
         }
         else if (answer=="Quit" || answer=="quit") {
             func_selector(quit, balance, slut);
+            break;
         }
         else {
             std::cout<<"Неизвестная команда.\n";
             continue;
         }
     }
+}
 }
 
 int main() {
@@ -656,7 +670,5 @@ int main() {
     #endif
     srand(static_cast<unsigned int>(time(nullptr))); 
 
-    while(1) {
     menu(balance);
-    }
 }
