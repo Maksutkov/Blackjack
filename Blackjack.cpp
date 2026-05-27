@@ -618,6 +618,7 @@ void quit(int& balance, Sluts& slut) {
     
 Ваш итоговый баланс: )"<<"$"<<balance<<std::endl;
 std::cout<<"Шлюх куплено: "<<slut.sold1+slut.sold2+slut.sold3<<"/3\n\n";
+    system("pause");
     exit(0);
 }
 
